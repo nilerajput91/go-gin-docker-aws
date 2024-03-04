@@ -29,10 +29,16 @@ jobs:
       - name: Format code
         run: gofmt -s -w .
 
+      - name: Install linters
+        run: |
+          go get -u golang.org/x/lint/golint
+          go get -u honnef.co/go/tools/cmd/staticcheck
+
       - name: Lint code
         run: |
-          golint ./...
-          staticcheck ./...
+          $(go env GOPATH)/bin/golint ./...
+          $(go env GOPATH)/bin/staticcheck ./...
+
 
   deploy-to-ecr:
     runs-on: ubuntu-latest
