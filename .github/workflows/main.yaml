@@ -29,17 +29,10 @@ jobs:
       - name: Format code
         run: gofmt -s -w .
 
-      - name: Add golint to PATH
-        run: export PATH="/home/runner/go/bin:$PATH"
-      
-      - name: Debug PATH
-        run: echo $PATH
-
-      - name: List contents of /home/runner/go/bin
-        run: ls /home/runner/go/bin
-
       - name: Lint code
-        run: /home/runner/go/bin/golint ./...
+        run: |
+          golint ./...
+          staticcheck ./...
 
 
       - name: Login to Amazon ECR
