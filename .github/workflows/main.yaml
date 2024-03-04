@@ -9,14 +9,14 @@ on:
       - "*"
 
 jobs:
-  format-and-lint:
+  format-and-lint-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: setup golang
+      - name: Setup Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.19
@@ -33,15 +33,6 @@ jobs:
         run: |
            export PATH=$PATH:$(go env GOPATH)/bin
            golint ./...
-
-
-  deploy-to-ecr:
-    runs-on: ubuntu-latest
-    needs: format-and-lint
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Login to Amazon ECR
         run: |
