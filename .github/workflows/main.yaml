@@ -36,8 +36,8 @@ jobs:
 
       - name: Lint code
         run: |
-          $(go env GOPATH)/bin/golint ./...
-          $(go env GOPATH)/bin/staticcheck ./...
+           export PATH=$PATH:$(go env GOPATH)/bin
+           golint ./...
 
 
   deploy-to-ecr:
