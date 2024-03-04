@@ -31,6 +31,12 @@ jobs:
 
       - name: Add golint to PATH
         run: export PATH="/home/runner/go/bin:$PATH"
+      
+      - name: Debug PATH
+        run: echo $PATH
+
+      - name: List contents of /home/runner/go/bin
+        run: ls /home/runner/go/bin
 
       - name: Lint code
         run: golint ./...
