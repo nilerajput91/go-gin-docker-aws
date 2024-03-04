@@ -1,0 +1,53 @@
+name: format-and-lint-and-deploy
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  format-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+
+      - name: Install linters
+        run: |
+          go get -u golang.org/x/lint/golint
+          go get -u honnef.co/go/tools/cmd/staticcheck
+
+      - name: Format code
+        run: gofmt -s -w .
+
+      - name: Lint code
+        run: |
+          golint ./...
+          staticcheck ./...
+
+  deploy-to-ecr:
+    runs-on: ubuntu-latest
+    needs: format-and-lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+      - name: Build and push Docker image to ECR
+        run: |
+          docker build -t myapp .
+          docker tag myapp:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest

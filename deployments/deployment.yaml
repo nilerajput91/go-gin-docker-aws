@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golang
+  template:
+    metadata:
+      labels:
+        app: golang
+    spec:
+      containers:
+        - name: golang
+          image: <your-ecr-repo>/golang:latest
+          ports:
+            - containerPort: 8113
+          env:
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: POSTGRES_USER
+              value: pep
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: postgres-password
+            - name: POSTGRES_DATABASE
+              value: company
+            - name: POSTGRES_PORT
+              value: "5432"
+          envFrom:
+            - configMapRef:
+                name: database-config
