@@ -39,7 +39,8 @@ jobs:
         run: ls /home/runner/go/bin
 
       - name: Lint code
-        run: golint ./...
+        run: /home/runner/go/bin/golint ./...
+
 
       - name: Login to Amazon ECR
         run: |
