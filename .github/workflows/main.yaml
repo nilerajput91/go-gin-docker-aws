@@ -29,10 +29,11 @@ jobs:
       - name: Format code
         run: gofmt -s -w .
 
+      - name: Add golint to PATH
+        run: echo "::add-path::$(go env GOPATH)/bin"
+
       - name: Lint code
-        run: |
-           export PATH=$PATH:$(go env GOPATH)/bin
-           golint ./...
+        run: golint ./...
 
       - name: Login to Amazon ECR
         run: |
