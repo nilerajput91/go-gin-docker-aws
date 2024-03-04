@@ -30,7 +30,7 @@ jobs:
         run: gofmt -s -w .
 
       - name: Add golint to PATH
-        run: echo "::add-path::$(go env GOPATH)/bin"
+        run: echo "PATH=$PATH:$(go env GOPATH)/bin" >> $GITHUB_ENV
 
       - name: Lint code
         run: golint ./...
