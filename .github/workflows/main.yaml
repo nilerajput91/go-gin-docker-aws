@@ -29,11 +29,6 @@ jobs:
       - name: Format code
         run: gofmt -s -w .
 
-      - name: Install linters
-        run: |
-          go get -u golang.org/x/lint/golint
-          go get -u honnef.co/go/tools/cmd/staticcheck
-
       - name: Lint code
         run: |
            export PATH=$PATH:$(go env GOPATH)/bin
