@@ -1,26 +1,23 @@
-# Start from the latest golang base image
-FROM golang:latest
+# Build Stage
+FROM golang:1.17 AS builder
 
-# Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Enable Go Modules
-ENV GO111MODULE=on
-
-# Copy go mod and sum files
 COPY go.mod go.sum ./
-
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 
-# Copy the source from the current directory to the Working Directory inside the container
 COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# Build the Go app
-RUN go build -o main .
+# Final Stage
+FROM alpine:latest
 
-# Expose port 8113 to the outside world
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+
+
+COPY --from=builder /app/main .
+
 EXPOSE 8113
 
-# Command to run the executable
 CMD ["./main"]
